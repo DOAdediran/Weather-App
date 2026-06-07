@@ -1,6 +1,7 @@
 {
   "name": "weather-app",
   "private": true,
+  "description": "React + Tailwind weather app with Open-Meteo integration, city search, hourly forecasts, theme toggle, and persistent search history.",
   "version": "0.1.0",
   "type": "module",
   "scripts": {

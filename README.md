@@ -1,5 +1,7 @@
 # Weather App
 
+React + Tailwind weather app with Open-Meteo integration, city search, hourly forecasts, theme toggle, and persistent search history.
+
 A React + Tailwind weather dashboard that integrates with Open-Meteo APIs for real-time weather lookup.
 
 ## Features
