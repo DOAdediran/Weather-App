@@ -10,6 +10,7 @@ function App() {
   const [message, setMessage] = useState('Enter a city name and press Search.')
   const [history, setHistory] = useState([])
   const [theme, setTheme] = useState('dark')
+  const [locationFilter, setLocationFilter] = useState('')
 
   useEffect(() => {
     const savedHistory = localStorage.getItem('weatherAppHistory')
@@ -51,6 +52,9 @@ function App() {
     secondaryButton: theme === 'dark'
       ? 'bg-slate-800 text-slate-100 hover:bg-slate-700'
       : 'bg-slate-200 text-slate-950 hover:bg-slate-300',
+    quickButton: theme === 'dark'
+      ? 'rounded-full border border-slate-700 bg-slate-950 text-slate-100 hover:border-cyan-400 hover:text-cyan-200'
+      : 'rounded-full border border-slate-300 bg-white text-slate-950 hover:border-sky-400 hover:text-sky-700',
     historyButton: theme === 'dark'
       ? 'rounded-full border border-slate-700 bg-slate-950 text-slate-100 hover:border-cyan-400 hover:text-cyan-200'
       : 'rounded-full border border-slate-300 bg-white text-slate-950 hover:border-sky-400 hover:text-slate-950',
@@ -62,6 +66,57 @@ function App() {
     statusButton: theme === 'dark' ? 'mt-4 inline-flex rounded-full bg-slate-800 px-4 py-2 text-sm text-slate-100 transition hover:bg-slate-700' : 'mt-4 inline-flex rounded-full bg-slate-200 px-4 py-2 text-sm text-slate-950 transition hover:bg-slate-300',
   }
 
+  const nigerianLocations = [
+    { state: 'Abia', cities: ['Umuahia', 'Aba', 'Ohafia', 'Arochukwu', 'Isuikwuato', 'Obingwa'] },
+    { state: 'Adamawa', cities: ['Yola', 'Mubi', 'Numan', 'Jimeta', 'Hong', 'Ganye'] },
+    { state: 'Akwa Ibom', cities: ['Uyo', 'Eket', 'Ikot Ekpene', 'Oron', 'Etinan', 'Abak'] },
+    { state: 'Anambra', cities: ['Awka', 'Onitsha', 'Nnewi', 'Otuocha', 'Ekwulobia', 'Agulu'] },
+    { state: 'Bauchi', cities: ['Bauchi', 'Azare', 'Misau', 'Ningi', 'Alkaleri', 'Katagum'] },
+    { state: 'Bayelsa', cities: ['Yenagoa', 'Ogbia', 'Brass', 'Sagbama', 'Ekeremor', 'Nembe'] },
+    { state: 'Benue', cities: ['Makurdi', 'Gboko', 'Otukpo', 'Katsina-Ala', 'Vandeikya', 'Adikpo'] },
+    { state: 'Borno', cities: ['Maiduguri', 'Biu', 'Dikwa', 'Gwoza', 'Kukawa', 'Ngala'] },
+    { state: 'Cross River', cities: ['Calabar', 'Ugep', 'Ogoja', 'Ikom', 'Obudu', 'Akamkpa'] },
+    { state: 'Delta', cities: ['Asaba', 'Warri', 'Ughelli', 'Sapele', 'Abraka', 'Burutu'] },
+    { state: 'Ebonyi', cities: ['Abakaliki', 'Afikpo', 'Onueke', 'Ezza', 'Ikwo', 'Ohaozara'] },
+    { state: 'Edo', cities: ['Benin City', 'Auchi', 'Ekpoma', 'Uromi', 'Igarra', 'Agbor'] },
+    { state: 'Ekiti', cities: ['Ado-Ekiti', 'Oye-Ekiti', 'Ikole-Ekiti', 'Ikere', 'Ilawe', 'Irepodun/Ifelodun', 'Efon-Alaaye', 'Aramoko-Ekiti'] },
+    { state: 'Enugu', cities: ['Enugu', 'Nsukka', 'Agbani', 'Udi', 'Obolo-Afor', 'Awgu'] },
+    { state: 'FCT', cities: ['Abuja', 'Gwagwalada', 'Kuje', 'Bwari', 'Kwali', 'Zuba'] },
+    { state: 'Gombe', cities: ['Gombe', 'Kaltungo', 'Billiri', 'Dukku', 'Funakaye', 'Yamaltu Deba'] },
+    { state: 'Imo', cities: ['Owerri', 'Orlu', 'Okigwe', 'Mbaise', 'Aboh Mbaise', 'Oguta'] },
+    { state: 'Jigawa', cities: ['Dutse', 'Hadejia', 'Kazaure', 'Gumel', 'Birnin Kudu', 'Ringim'] },
+    { state: 'Kaduna', cities: ['Kaduna', 'Zaria', 'Kafanchan', 'Kachia', 'Soba', 'Lere'] },
+    { state: 'Kano', cities: ['Kano', 'Katsina', 'Wudil', 'Rano', 'Gaya', 'Bichi'] },
+    { state: 'Katsina', cities: ['Katsina', 'Daura', 'Funtua', 'Kankia', 'Jibia', 'Dutsin-Ma'] },
+    { state: 'Kebbi', cities: ['Birnin Kebbi', 'Argungu', 'Yauri', 'Zuru', 'Bagudo', 'Jega'] },
+    { state: 'Kogi', cities: ['Lokoja', 'Idah', 'Anyigba', 'Okene', 'Kabba', 'Ajaokuta'] },
+    { state: 'Kwara', cities: ['Ilorin', 'Offa', 'Kaiama', 'Jebba', 'Ilesha Baruba', 'Omu-Aran'] },
+    { state: 'Lagos', cities: ['Lagos', 'Ikeja', 'Surulere', 'Lekki', 'Victoria Island', 'Alimosho'] },
+    { state: 'Nasarawa', cities: ['Lafia', 'Keffi', 'Akwanga', 'Karu', 'Wamba', 'Nasarawa Eggon'] },
+    { state: 'Niger', cities: ['Minna', 'Kontagora', 'Suleja', 'Bida', 'Paikoro', 'Lapai'] },
+    { state: 'Ogun', cities: ['Abeokuta', 'Sagamu', 'Ijebu Ode', 'Ota', 'Shagamu', 'Ifo'] },
+    { state: 'Ondo', cities: ['Akure', 'Ondo', 'Owo', 'Ikare', 'Iju', 'Igbokoda'] },
+    { state: 'Osun', cities: ['Osogbo', 'Ilesa', 'Ede', 'Ikirun', 'Iwo', 'Ifetedo'] },
+    { state: 'Oyo', cities: ['Ibadan', 'Ogbomosho', 'Saki', 'Iseyin', 'Oyo Town', 'Kisi'] },
+    { state: 'Plateau', cities: ['Jos', 'Bukuru', 'Pankshin', 'Shendam', 'Mangu', 'Langtang'] },
+    { state: 'Rivers', cities: ['Port Harcourt', 'Bonny', 'Eleme', 'Obio/Akpor', 'Ahoada', 'Degema'] },
+    { state: 'Sokoto', cities: ['Sokoto', 'Tambuwal', 'Gwadabawa', 'Wurno', 'Kebbe', 'Tureta'] },
+    { state: 'Taraba', cities: ['Jalingo', 'Wukari', 'Sardauna', 'Bali', 'Ibi', 'Gashaka'] },
+    { state: 'Yobe', cities: ['Damaturu', 'Potiskum', 'Gujba', 'Nguru', 'Bursari', 'Fika'] },
+    { state: 'Zamfara', cities: ['Gusau', 'Talata Mafara', 'Kaura Namoda', 'Maru', 'Bakura', 'Anka'] },
+  ]
+
+  const flattenedNigerianLocations = nigerianLocations.flatMap((location) =>
+    location.cities.map((cityName) => ({
+      city: cityName,
+      state: location.state,
+    }))
+  )
+
+  const filteredNigerianLocations = locationFilter.trim()
+    ? flattenedNigerianLocations.filter(({ city, state }) => `${city} ${state}`.toLowerCase().includes(locationFilter.toLowerCase()))
+    : flattenedNigerianLocations.slice(0, 18)
+
   const addToHistory = (entry) => {
     setHistory((prev) => {
       const filtered = prev.filter((item) => item.city !== entry.city)
@@ -71,6 +126,11 @@ function App() {
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
+  }
+
+  const handleQuickCity = (cityName) => {
+    setCity(cityName)
+    searchCity(cityName)
   }
 
   const searchCity = async (cityName) => {
@@ -86,13 +146,16 @@ function App() {
     setWeather(null)
 
     try {
-      const geoResponse = await fetch(`${GEO_API}?name=${encodeURIComponent(cityName)}&count=1&language=en&format=json`)
+      const geoResponse = await fetch(`${GEO_API}?name=${encodeURIComponent(cityName)}&count=5&language=en&format=json`)
       if (!geoResponse.ok) {
         throw new Error(`Geocoding request failed (${geoResponse.status})`)
       }
 
       const geoData = await geoResponse.json()
-      const location = geoData?.results?.[0]
+      const matchedResults = Array.isArray(geoData?.results) ? geoData.results : []
+      const nigeriaMatch = matchedResults.find((result) => result.country === 'Nigeria')
+      const location = nigeriaMatch || matchedResults[0]
+
       if (!location || typeof location.latitude !== 'number' || typeof location.longitude !== 'number') {
         setStatus('error')
         setMessage(`No match found for "${cityName}". Try another city name.`)
@@ -251,7 +314,7 @@ function App() {
                 id="city-input"
                 value={city}
                 onChange={(event) => setCity(event.target.value)}
-                placeholder="Enter city name"
+                placeholder="Enter state, city, or local government area (for example: Lagos, Abuja, Enugu, Aba)"
                 className={`w-full rounded-2xl border px-4 py-3 outline-none ring-1 transition ${themeStyles.input}`}
               />
               <button
@@ -271,6 +334,43 @@ function App() {
             {theme === 'dark' ? 'Light mode' : 'Dark mode'}
           </button>
         </div>
+
+        <section className={`mt-6 rounded-3xl border p-6 ${themeStyles.section}`}>
+          <div className="mb-4 flex items-center justify-between gap-4">
+            <h2 className={`text-sm font-semibold uppercase tracking-[0.3em] ${themeStyles.accentText}`}>Nigeria-wide locations</h2>
+          </div>
+
+          <div className="mb-4">
+            <label className={`mb-2 block text-xs font-semibold uppercase tracking-[0.25em] ${themeStyles.mutedText}`} htmlFor="location-filter">
+              Search Nigeria places
+            </label>
+            <input
+              id="location-filter"
+              type="text"
+              value={locationFilter}
+              onChange={(event) => setLocationFilter(event.target.value)}
+              placeholder="Type a state or city"
+              className={`w-full rounded-2xl border px-4 py-3 outline-none ring-1 transition ${themeStyles.input}`}
+            />
+          </div>
+
+          <div className="flex max-h-64 flex-wrap gap-2 overflow-y-auto pr-1">
+            {filteredNigerianLocations.length > 0 ? (
+              filteredNigerianLocations.map(({ city, state }) => (
+                <button
+                  key={`${state}-${city}`}
+                  type="button"
+                  onClick={() => handleQuickCity(city)}
+                  className={themeStyles.quickButton}
+                >
+                  {city} • {state}
+                </button>
+              ))
+            ) : (
+              <p className={themeStyles.mutedText}>No matching Nigerian locations found.</p>
+            )}
+          </div>
+        </section>
 
         <section className={`mt-6 rounded-3xl border p-6 ${themeStyles.section}`}>
           <div className={`mb-4 flex items-center justify-between gap-4 text-sm ${themeStyles.mutedText}`}>
